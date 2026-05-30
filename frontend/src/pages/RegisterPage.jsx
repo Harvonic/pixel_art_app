@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { register } from "../api/auth.js";
 
 function RegisterPage() {
 
@@ -8,6 +9,10 @@ function RegisterPage() {
     password: "",
   });
 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   function handleChange(e) {
     setFormData({
       ...formData,
@@ -15,14 +20,31 @@ function RegisterPage() {
     })
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
+
+    setError("");
+    setSuccess("");
+    setIsSubmitting(true);
+
+    try {
+      const user = await register(formData);
+      setSuccess(`Account created for ${user.username}`);
+
+    } catch(err) {
+      setError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <main>
       <h1>Register</h1>
+
+      {error && <p>{error}</p>}
+      {success && <p>{success}</p>}
 
       <form onSubmit={handleSubmit}>
         
@@ -62,7 +84,9 @@ function RegisterPage() {
           />
         </div>
 
-        <button type="submit">Create Account</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Account"}
+        </button>
       </form>
     </main>
   );

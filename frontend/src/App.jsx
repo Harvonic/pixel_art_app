@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-const API_URL = import.meta.env.VITE_API_URL;
 
 // Pages
 import HomePage from "./pages/HomePage";
