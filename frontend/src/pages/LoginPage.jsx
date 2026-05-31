@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { login } from "../api/auth.js";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 function LoginPage() {
+
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const [formData, setFormData] = useState({
     login: "",
@@ -29,7 +34,9 @@ function LoginPage() {
 
     try {
       const user = await login(formData);
-      setSuccess(`Sucessfully logged in for ${user.username}`);
+      // setSuccess(`Sucessfully logged in for ${user.username}`);
+      setUser(user);
+      navigate("/feed");
 
     } catch(err) {
       setError(err.message);

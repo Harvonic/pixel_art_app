@@ -43,3 +43,20 @@ export async function login(formData) {
 
     return result.data.user;
 }
+
+// For getting user
+// GET /auth/me
+export async function getCurrentUser() {
+    const response = await fetch(`${API_URL}/auth/me`, {
+        method: "GET",
+        credentials: "include",
+    });
+
+    if (!response.ok) {
+        return null;
+    }
+
+    const result = await response.json();
+
+    return result.data.user;
+}

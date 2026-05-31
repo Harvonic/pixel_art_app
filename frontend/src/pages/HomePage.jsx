@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom"
+import { useAuth } from "../context/AuthContext.jsx";
 
 function HomePage() {
+  
   return (
     <main>
       <h1>Home Page</h1>
