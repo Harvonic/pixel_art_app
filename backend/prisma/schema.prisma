@@ -12,10 +12,36 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  username String @unique
-  email String @unique
+  id           Int    @id @default(autoincrement())
+  username     String @unique
+  email        String @unique
   passwordHash String
 
+  createdAt DateTime  @default(now())
+  artworks  Artwork[]
+  posts     Post[]
+}
+
+model Artwork {
+  id        Int      @id @default(autoincrement())
+  createrId Int
+  rows      Int
+  cols      Int
+  pixels    Json
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creator User  @relation(fields: [createrId], references: [id])
+  post    Post?
+}
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  artworkId   Int      @unique
+  authorId    Int
+  caption     String?
+  publishedAt DateTime @default(now())
+
+  artwork Artwork @relation(fields: [artworkId], references: [id])
+  author  User    @relation(fields: [authorId], references: [id])
 }
