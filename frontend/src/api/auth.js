@@ -9,6 +9,7 @@ export async function register(formData) {
         headers: {
             "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(formData),
     });
 
@@ -16,6 +17,28 @@ export async function register(formData) {
 
     if (!response.ok) {
         throw new Error(result.error || "Registration failed");
+    }
+
+    return result.data.user;
+}
+
+// For users logging in
+// POST /auth/login
+export async function login(formData) {
+
+    const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.error || "Login failed");
     }
 
     return result.data.user;
