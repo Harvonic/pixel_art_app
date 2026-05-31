@@ -14,6 +14,7 @@ import DashboardPage from "./pages/DashboardPage";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
+import GuestRoute from "./components/GuestRoute";
 
 
 function App() {
@@ -21,10 +22,26 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+
         <Route path="/users/:username" element={<ProfilePage />} />
+
+        <Route path="/" element={
+          <GuestRoute>
+            <HomePage />
+          </GuestRoute>
+        } />
+
+        <Route path="/login" element={
+          <GuestRoute>
+            <LoginPage />
+          </GuestRoute>
+        } />
+
+        <Route path="/register" element={
+          <GuestRoute>
+            <RegisterPage />
+          </GuestRoute>
+        } />
 
         <Route path="/feed" element={
           <ProtectedRoute>

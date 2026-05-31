@@ -60,3 +60,16 @@ export async function getCurrentUser() {
 
     return result.data.user;
 }
+
+// For logging out user (duh)
+// POST /auth/logout
+export async function logout() {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+    })
+
+    if (!response.ok) {
+        throw new Error("Logout failed");
+    }
+}
