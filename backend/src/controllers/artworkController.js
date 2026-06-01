@@ -100,4 +100,49 @@ const updateArtwork = async (req, res, next) => {
         next(err);
     }
 };
-export { createArtwork, updateArtwork };
+
+const getArtworks = async (req, res, next) => {
+    try {
+        const artworks = await prisma.artwork.findMany({
+            where: {
+                creatorId: req.user.id,
+            },
+            orderBy: {
+                updatedAt: "desc",
+            },
+        });
+
+        return res.status(200).json({ ok: true, data: { artworks } });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+const getArtworkById = async (req, res, next) => {
+    try {
+        const artworkId = Number(req.params.id);
+
+        if (!Number.isInteger(artworkId)) {
+            return res.status(400).json({ ok: false, error: "Invalid artwork ID" });
+        }
+
+        const artwork = await prisma.artwork.findFirst({
+            where: {
+                creatorId: req.user.id,
+                id: artworkId
+            },
+        });
+
+        if (!artwork) {
+            return res.status(404).json({ ok: false, error: "Artwork not found", });
+        }
+
+        return res.status(200).json({ ok: true, data: { artwork } });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { createArtwork, updateArtwork, getArtworks, getArtworkById };

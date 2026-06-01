@@ -55,6 +55,12 @@ function App() {
           </ProtectedRoute>
         } />
 
+        <Route path="/editor/:id" element={
+           <ProtectedRoute>
+            <EditorPage />
+          </ProtectedRoute>
+        } />
+
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <DashboardPage />

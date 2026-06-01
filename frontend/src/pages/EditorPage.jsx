@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { createArtwork, updateArtwork } from "../api/artworks";
+import { useState, useEffect } from "react";
+import { createArtwork, updateArtwork, getArtworkById } from "../api/artworks";
+import { useFetcher, useParams } from "react-router-dom";
 
 
 function createGrid(rows, cols, defaultValue) {
@@ -49,10 +50,54 @@ function EditorPage() {
   const [isDrawing, setIsDrawing] = useState(false);
 
   // for saving art
-  const [artworkId, setArtworkId] = useState(null);
+  const { id } = useParams();
+  const [artworkId, setArtworkId] = useState(id ? Number(id) : null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState("");
+
+  // for loading artwork
+  const [isLoadingArtwork, setIsLoadingArtwork] = useState(false);
+  const [loadError, setLoadError] = useState("");
+
+  // load artwork if needed
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+
+    async function loadArtwork() {
+      setIsLoadingArtwork(true);
+      setLoadError("");
+
+      try {
+        const artwork = await getArtworkById(id);
+
+        setArtworkId(artwork.id);
+        setCols(artwork.width);
+        setRows(artwork.height);
+        setGrid(artwork.pixels);
+
+        const matchingPreset = canvasPresets.find(
+          (preset) =>
+            preset.cols === artwork.width &&
+            preset.rows === artwork.height
+        );
+
+        if (matchingPreset) {
+          setSelectedPreset(matchingPreset.label);
+        }
+
+      } catch (err) {
+        setLoadError(err.message);
+      } finally {
+        setIsLoadingArtwork(false);
+      }
+
+    }
+
+    loadArtwork();
+  }, [id]);
 
   function paintPixel(index) {
     setGrid((currentGrid) => {
@@ -69,7 +114,7 @@ function EditorPage() {
     setSaveError("");
     setSaveSuccess("");
 
-    const artworkData  = {
+    const artworkData = {
       width: cols,
       height: rows,
       pixels: grid,
@@ -122,6 +167,14 @@ function EditorPage() {
     };
   }
 
+
+  if (isLoadingArtwork) {
+    return <p>Loading artwork...</p>;
+  }
+
+  if (loadError) {
+    return <p>{loadError}</p>;
+  }
 
   return (
     <main>
