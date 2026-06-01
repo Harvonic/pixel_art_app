@@ -24,14 +24,14 @@ model User {
 
 model Artwork {
   id        Int      @id @default(autoincrement())
-  createrId Int
-  rows      Int
-  cols      Int
+  creatorId Int
+  width      Int
+  height      Int
   pixels    Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  creator User  @relation(fields: [createrId], references: [id])
+  creator User  @relation(fields: [creatorId], references: [id])
   post    Post?
 }
 

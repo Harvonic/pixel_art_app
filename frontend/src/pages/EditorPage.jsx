@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createArtwork, updateArtwork } from "../api/artworks";
 
 
 function createGrid(rows, cols, defaultValue) {
@@ -47,6 +48,12 @@ function EditorPage() {
   const [tool, setTool] = useState("paint");
   const [isDrawing, setIsDrawing] = useState(false);
 
+  // for saving art
+  const [artworkId, setArtworkId] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [saveSuccess, setSaveSuccess] = useState("");
+
   function paintPixel(index) {
     setGrid((currentGrid) => {
       const updatedGrid = [...currentGrid];
@@ -54,6 +61,36 @@ function EditorPage() {
       return updatedGrid;
 
     })
+  }
+
+  async function saveArtwork() {
+
+    setIsSaving(true);
+    setSaveError("");
+    setSaveSuccess("");
+
+    const artworkData  = {
+      width: cols,
+      height: rows,
+      pixels: grid,
+    }
+
+    try {
+      if (artworkId === null) {
+        const artwork = await createArtwork(artworkData);
+        setArtworkId(artwork.id);
+        setSaveSuccess("Artwork saved");
+      } else {
+        await updateArtwork(artworkId, artworkData);
+        setSaveSuccess("Artwork updated");
+      }
+    } catch (err) {
+      setSaveError(err.message);
+    } finally {
+      setIsSaving(false);
+    }
+
+
   }
 
   function clearCanvas() {
@@ -66,7 +103,7 @@ function EditorPage() {
     setGrid(createGrid(newRows, newCols, defaultValue));
   }
 
-  function handleCanvasSizeChnage(e) {
+  function handleCanvasSizeChange(e) {
     const selectedPreset = canvasPresets.find(
       (preset) => preset.label === e.target.value
     );
@@ -90,6 +127,9 @@ function EditorPage() {
     <main>
       <h1>Editor Page</h1>
 
+      {saveError && <p>{saveError}</p>}
+      {saveSuccess && <p>{saveSuccess}</p>}
+
       <input
         type="color"
         value={selectedColor}
@@ -98,7 +138,7 @@ function EditorPage() {
 
       {" "}
 
-      <button type="button" style={getToolButtonStyle("paint")}  onClick={() => setTool("paint")}>
+      <button type="button" style={getToolButtonStyle("paint")} onClick={() => setTool("paint")}>
         Paint
       </button>
 
@@ -110,7 +150,7 @@ function EditorPage() {
 
       {" "}
 
-      <button type="button" style={getToolButtonStyle("clear")} onClick={clearCanvas}>
+      <button type="button" onClick={clearCanvas}>
         Clear
       </button>
 
@@ -119,7 +159,7 @@ function EditorPage() {
       <select
         id="canvas-size"
         value={selectedPreset}
-        onChange={handleCanvasSizeChnage}
+        onChange={handleCanvasSizeChange}
       >
 
         {canvasPresets.map((preset) => (
@@ -141,6 +181,11 @@ function EditorPage() {
         checked={visibleGrid}
         onChange={changeGridVisbility}
       />
+
+      <button type="button" onClick={saveArtwork} disabled={isSaving}>
+        {isSaving ? "Saving..." : "Save"}
+      </button>
+
       <div style={canvasWrapperStyle}>
         <div
           className="canvas"
