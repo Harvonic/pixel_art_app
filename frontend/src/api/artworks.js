@@ -68,3 +68,18 @@ export async function getArtworkById(id) {
 
   return result.data.artwork;
 }
+
+export async function deleteArtwork(id) {
+  const response = await fetch(`${API_URL}/artworks/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete artwork");
+  }
+
+  return result;
+}

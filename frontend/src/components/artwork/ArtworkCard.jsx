@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import ArtworkPreview from "./ArtworkPreview.jsx";
 
-function ArtworkCard({ artwork }) {
+function ArtworkCard({ artwork, onDelete }) {
 
     const cardStyle = {
         width: "240px",
@@ -38,16 +38,23 @@ function ArtworkCard({ artwork }) {
                     height={artwork.height}
                     pixels={artwork.pixels}
                 />
-                </div>
+            </div>
 
-                <p>
-                    Updated: {new Date(artwork.updatedAt).toLocaleString()}
-                </p>
+            <p>
+                Updated: {new Date(artwork.updatedAt).toLocaleString()}
+            </p>
 
-                <Link to={`/editor/${artwork.id}`} style={editLinkStyle}>
-                    Edit
-                </Link>
-            
+            <Link to={`/editor/${artwork.id}`} style={editLinkStyle}>
+                Edit
+            </Link>
+
+            <button
+                type="button"
+                onClick={() => onDelete(artwork.id)}
+            >
+                Delete
+            </button>
+
         </article>
     )
 }

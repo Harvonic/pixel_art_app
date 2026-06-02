@@ -47,7 +47,7 @@ const updateArtwork = async (req, res, next) => {
     try {
         const artworkId = Number(req.params.id);
 
-        if (!Number.isInteger(artworkId)) {
+        if (!Number.isInteger(artworkId) || artworkId <= 0) {
             return res.status(400).json({ ok: false, error: "Invalid artwork ID" });
         }
 
@@ -123,7 +123,7 @@ const getArtworkById = async (req, res, next) => {
     try {
         const artworkId = Number(req.params.id);
 
-        if (!Number.isInteger(artworkId)) {
+        if (!Number.isInteger(artworkId) || artworkId <= 0) {
             return res.status(400).json({ ok: false, error: "Invalid artwork ID" });
         }
 
@@ -145,4 +145,50 @@ const getArtworkById = async (req, res, next) => {
     }
 };
 
-export { createArtwork, updateArtwork, getArtworks, getArtworkById };
+const deleteArtwork = async (req, res, next) => {
+    try {
+        const artworkId = Number(req.params.id);
+
+        if (!Number.isInteger(artworkId) || artworkId <= 0) {
+            return res.status(400).json({ ok: false, error: "Invalid artwork ID" });
+        }
+
+        const existingArtwork = await prisma.artwork.findFirst({
+            where: {
+                id: artworkId,
+                creatorId: req.user.id,
+            },
+            include: {
+                post: true,
+            },
+        });
+
+        if (!existingArtwork) {
+            return res.status(404).json({
+                ok: false,
+                error: "Artwork not found",
+            });
+        }
+
+        if (existingArtwork.post) {
+            return res.status(409).json({
+                ok: false,
+                error: "Published artwork cannot be deleted",
+            });
+        }
+
+        await prisma.artwork.delete({
+            where: {
+                id: artworkId,
+                creatorId: req.user.id,
+            },
+        });
+
+        return res.status(200).json({ ok: true, message: "Artwork deleted" });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { createArtwork, updateArtwork, getArtworks, getArtworkById, deleteArtwork };
