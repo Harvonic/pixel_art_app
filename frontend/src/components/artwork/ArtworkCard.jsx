@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import ArtworkPreview from "./ArtworkPreview.jsx";
 
-function ArtworkCard({ artwork, onDelete }) {
+function ArtworkCard({ artwork, onDelete, onPublish }) {
 
     const cardStyle = {
         width: "240px",
@@ -47,6 +47,13 @@ function ArtworkCard({ artwork, onDelete }) {
             <Link to={`/editor/${artwork.id}`} style={editLinkStyle}>
                 Edit
             </Link>
+
+            <button
+                type="button"
+                onClick={() => onPublish(artwork.id)}
+            >
+                Publish
+            </button>
 
             <button
                 type="button"

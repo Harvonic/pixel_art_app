@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/authRoutes.js";
 import artworkRoutes from "./routes/artworkRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 
 app.use("/auth", authRoutes);
 app.use("/artworks", artworkRoutes);
+app.use("/posts", postRoutes);
 
 app.get("/test", (req, res) => {
     res.json({ message: "Backend running" });

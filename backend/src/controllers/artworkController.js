@@ -106,6 +106,7 @@ const getArtworks = async (req, res, next) => {
         const artworks = await prisma.artwork.findMany({
             where: {
                 creatorId: req.user.id,
+                post: null,
             },
             orderBy: {
                 updatedAt: "desc",
