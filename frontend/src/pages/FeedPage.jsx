@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { getPosts } from "../api/posts.js";
+import PostFeedCard from "../components/posts/PostFeedCard.jsx";
 
 function FeedPage() {
 
@@ -10,6 +12,28 @@ function FeedPage() {
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState("");
+
+  const [posts, setPosts] = useState([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(false);
+  const [postsError, setPostsError] = useState("");
+
+  useEffect(() => {
+    async function loadPosts() {
+      setIsLoadingPosts(true);
+      setPostsError("");
+
+      try {
+        const loadedPosts = await getPosts();
+        setPosts(loadedPosts);
+      } catch (err) {
+        setPostsError(err.message);
+      } finally {
+        setIsLoadingPosts(false);
+      }
+    }
+
+    loadPosts();
+  }, []);
 
   async function handleLogout(e) {
     e.preventDefault();
@@ -23,7 +47,7 @@ function FeedPage() {
       navigate("/login");
 
     }
-    catch(err){
+    catch (err) {
       setError(err.message);
     } finally {
       setIsLoggingOut(false);
@@ -37,11 +61,30 @@ function FeedPage() {
 
       {error && <p>{error}</p>}
 
-      <form onSubmit={ handleLogout }>
+      {isLoadingPosts && <p>Loading feed...</p>}
+      {postsError && <p>{postsError}</p>}
+
+      {posts.length === 0 && !isLoadingPosts && (
+        <p>No posts yet.</p>
+      )}
+
+      <form onSubmit={handleLogout}>
         <button type="submit" disabled={isLoggingOut}>
           {isLoggingOut ? "Logging out..." : "Log out"}
         </button>
       </form>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {posts.map((post) => (
+          <PostFeedCard key={post.id} post={post} />
+        ))}
+      </div>
 
     </main>
   );

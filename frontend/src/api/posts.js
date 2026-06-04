@@ -27,16 +27,31 @@ export async function createPost({ artworkId, caption }) {
 }
 
 export async function getUserPosts() {
-  const response = await fetch(`${API_URL}/posts/me`, {
-    method: "GET",
-    credentials: "include",
-  });
+    const response = await fetch(`${API_URL}/posts/me`, {
+        method: "GET",
+        credentials: "include",
+    });
 
-  const result = await response.json();
+    const result = await response.json();
 
-  if (!response.ok) {
-    throw new Error(result.error || "Failed to load posts");
-  }
+    if (!response.ok) {
+        throw new Error(result.error || "Failed to load posts");
+    }
 
-  return result.data.posts;
+    return result.data.posts;
+}
+
+export async function getPosts() {
+    const response = await fetch(`${API_URL}/posts`, {
+        method: "GET",
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.error || "Failed to load posts");
+    }
+
+    return result.data.posts;
 }

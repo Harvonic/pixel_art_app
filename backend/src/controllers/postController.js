@@ -74,32 +74,63 @@ const createPost = async (req, res, next) => {
 };
 
 const getUserPosts = async (req, res, next) => {
-  try {
-    const posts = await prisma.post.findMany({
-      where: {
-        authorId: req.user.id,
-      },
-      orderBy: {
-        publishedAt: "desc",
-      },
-      include: {
-        artwork: true,
-        author: {
-          select: {
-            id: true,
-            username: true,
-          },
-        },
-      },
-    });
+    try {
+        const posts = await prisma.post.findMany({
+            where: {
+                authorId: req.user.id,
+            },
+            orderBy: {
+                publishedAt: "desc",
+            },
+            include: {
+                artwork: true,
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                    },
+                },
+            },
+        });
 
-    return res.status(200).json({
-      ok: true,
-      data: { posts },
-    });
-  } catch (err) {
-    next(err);
-  }
+        return res.status(200).json({
+            ok: true,
+            data: { posts },
+        });
+    } catch (err) {
+        next(err);
+    }
 };
 
-export { createPost, getUserPosts  };
+const getPosts = async (req, res, next) => {
+    try {
+
+        const posts = await prisma.post.findMany({
+            orderBy: {
+                publishedAt: "desc",
+            },
+            take: 20,
+            include: {
+                artwork: true,
+                author: {
+                    select: {
+                        id: true,
+                        username: true,
+                    },
+                },
+            },
+        });
+
+        return res.status(200).json({
+            ok: true,
+            data: { posts },
+        });
+
+
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+export { createPost, getUserPosts, getPosts };

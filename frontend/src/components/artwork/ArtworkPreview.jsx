@@ -1,6 +1,5 @@
 
-function ArtworkPreview({ width, height, pixels }) {
-    const pixelSize = 8;
+function ArtworkPreview({ width, height, pixels, pixelSize = 8 }) {
 
     const previewStyle = {
         display: "grid",
