@@ -1,4 +1,5 @@
 import ArtworkPreview from "../artwork/ArtworkPreview.jsx";
+import { Link } from "react-router-dom";
 
 function PostFeedCard({ post }) {
   const cardStyle = {
@@ -31,7 +32,9 @@ function PostFeedCard({ post }) {
 
   return (
     <article style={cardStyle}>
-      <div style={headerStyle}>@{post.author.username}</div>
+      <Link to={`/users/${post.author.username}`}>
+        @{post.author.username}
+      </Link>
 
       <div style={artworkFrameStyle}>
         <ArtworkPreview
